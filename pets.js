@@ -1,6 +1,5 @@
 'use strict'
 
-
 const fs = require('fs')
 const path = require('path')
 const petsPath = path.join('pets.json')
@@ -26,7 +25,7 @@ if (cmd === 'read') {
 
     const index = Number.parseInt(process.argv[3])
     const pets = JSON.parse(data)
-    console.log(pets)
+    // console.log(pets)
 
     if (Number.isNaN(index)) {
       console.log(pets)
@@ -54,7 +53,11 @@ else if (cmd === 'create') {
       console.error(`Usage: ${node} ${file} ${cmd} AGE KIND NAME`);
       process.exit(1)
     }
-    const pet = { age, kind, name }
+    const pet = {
+      age,
+      kind,
+      name
+    }
 
     pets.push(pet);
 
@@ -68,18 +71,7 @@ else if (cmd === 'create') {
     })
   })
 }
- else if (cmd === 'update') {
-
- }
-
-
-
-
-
-
-
-
  else {
-  console.error(`Usage: ${node} ${file} [read | create]`)
+  console.error(`Usage: ${node} ${file} [read | create | update | destroy]`)
   process.exit(1)
 }
