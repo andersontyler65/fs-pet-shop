@@ -1,4 +1,5 @@
 'use strict'
+
 let fs = require('fs')
 const path = require('path')
 const petsPath = path.join(__dirname, 'pets.json')
@@ -6,10 +7,10 @@ const petsPath = path.join(__dirname, 'pets.json')
 const http = require('http')
 const port = process.env.PORT || 8000;
 
-
-const server = http.createServer(function (req, res) {
-    fs.readFile(petsPath, 'utf8', function(err, data){
-      if(err) {
+const server = http.createServer(function(req, res) {
+  if (req.method === 'GET' && req.url === '/pets') {
+    fs.readFile(petsPath, 'utf8', function(err, data) {
+      if (err) {
         console.error(err.stack)
         res.statusCode = 500
         res.setHeader('Content-Type', 'text/plain')
@@ -18,6 +19,7 @@ const server = http.createServer(function (req, res) {
       res.setHeader('Content-Type', 'application/json')
       res.end(data)
     })
+
 }
 else if (req.method ==='GET' && req.url === '/pets/0') {
   fs.readFile(petsPath, 'utf8', function(err, data){
@@ -51,15 +53,17 @@ else if (req.method ==='GET' && req.url === '/pets/0') {
         res.end(petJSON)
       })
     }
-    else {
-      res.statusCode = 404
-      res.setHeader('Content-Type', 'text/plain')
-      res.end('Not Found')
-    }
-  })
+  //end
+  else {
+    res.statusCode = 404
+    res.setHeader('Content-Type', 'text/plain')
+    res.end('Not Found')
+  }
+})
 
 server.listen(port, function() {
   console.log('Listening on port', port)
 })
+
 
 module.exports = server

@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/gSchool/fs-pet-shop#readme",
   "dependencies": {
+    "express": "^4.15.4",
     "nodemon": "^1.12.0"
   },
   "devDependencies": {
@@ -34,5 +35,8 @@
     "mocha": "^3.0.2",
     "rewire": "^2.5.2",
     "supertest": "^2.0.0"
+  },
+  "directories": {
+    "test": "test"
   }
 }
