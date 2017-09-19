@@ -78,92 +78,88 @@ app.post('/pets', function(req, res) {
   })
 })
 
-app.patch('/pets/:id', (req, res) => {
-  fs.readFile(petsPath, 'utf8', (err, data) => {
-    if (err) {
-      return (err)
+app.patch('/pets/:id', (req, res, next) => {
+  // eslint-disable-next-line max-statements
+  fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
+    if (readErr) {
+      return next(readErr)
     }
 
-    let id = Number.parseInt(req.params.id)
-    let pets = JSON.parse(data)
+    const id = Number.parseInt(req.params.id)
+    const pets = JSON.parse(petsJSON)
 
-    if (id < 0 || id >= pets.length|| Number.isNaN(id)) {
-      res.setHeader('Content-Type', 'application/json')
+    if (id < 0 || id >= pets.length || Number.isNaN(id)) {
       return res.sendStatus(404)
     }
 
     const age = Number.parseInt(req.body.age)
-    const { kind, name} = req.body
-    //var pet = req.body
-    // var petLength = Object.keys(pet).length
-    // console.log(pets.length)
-
-     //pet[id] = pet
+    const { kind, name } = req.body
 
     if (!Number.isNaN(age)) {
       pets[id].age = age
     }
+
     if (kind) {
       pets[id].kind = kind
     }
+
     if (name) {
       pets[id].name = name
     }
 
     const newPetsJSON = JSON.stringify(pets)
 
-    fs.writeFile(petsPath, newPetsJSON, (err) => {
-      if (err) {
-        console.error(err.stack)
-      return (err)
+    fs.writeFile(petsPath, newPetsJSON, (writeErr) => {
+      if (writeErr) {
+        return next(writeErr)
+      }
+
+      res.send(pets[id])
+    });
+  });
+});
+
+app.patch('/pets/:id', (req, res, next) => {
+  fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
+    if (readErr) {
+      return next(readErr)
     }
-    console.log(`\n\n\n>>> YO IT IS JSON \n\n\n`)
-    res.setHeader('Content-Type', 'application/json')
-    res.send(pets)
+
+    const id = Number.parseInt(req.params.id)
+    const pets = JSON.parse(petsJSON)
+
+    if (id < 0 || id >= pets.length || Number.isNaN(id)) {
+      return res.sendStatus(404)
+    }
+
+    const pet = pets[id]
+    const age = Number.parseInt(req.body.age)
+    const kind = req.body.kind
+    const name = req.body.name
+
+    if (!Number.isNaN(age)) {
+      pet.age = age
+    }
+
+    if (kind) {
+      pet.kind = kind
+    }
+
+    if (name) {
+      pet.name = name
+    }
+
+    const newPetsJSON = JSON.stringify(pets)
+
+    fs.writeFile(petsPath, newPetsJSON, (writeErr) => {
+      if (writeErr) {
+        return next(writeErr)
+      }
+
+      res.send(pet)
     })
   })
 })
-
-  app.patch('/pets/:id', (req, res) => {
-    fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
-      if (readErr) {
-        return (err)
-      }
-
-      const id = Number.parseInt(req.params.id)
-      const pets = JSON.parse(petsJSON)
-
-      if (id < 0 || id >= pets.length || Number.isNaN(id)) {
-        res.setHeader('Content-Type', 'application/json')
-        return res.sendStatus(404)
-      }
-
-      const pet = pets[id]
-      const age = Number.parseInt(req.body.age)
-      const kind = req.body.kind
-      const name = req.body.name
-
-      if (!Number.isNaN(age)) {
-        pet.age = age
-        }
-        if (kind) {
-          pet.kind = kind
-        }
-        if (name) {
-          pet.name = name
-        }
-
-        const newPetsJSON = JSON.stringify(pets)
-
-        fs.writeFile(petsPath, newPetsJSON, (writeErr) => {
-          if (writeErr) {
-            return res.sendStatus(500)
-          }
-          res.setHeader('Content-Type', 'application/json')
-          res.send(pets)
-        })
-    })
-  })
 
   app.delete('/pets/:id', (req, res) => {
     fs.readFile(petsPath, 'utf8', (err, petsJSON) => {
